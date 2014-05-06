@@ -131,7 +131,7 @@ Functional Tests
 -----------------
 Functional (Selenium) tests for oneanddone are maintained by the Web QA team and can be found at [oneanddone-tests].
 
-[oneanddone-tests]: https://github.com/mozilla/oneanddone-tests
+[oneanddone-tests]: https://github.com/mozilla/oneanddone/oneanddone/functional_tests
 
 
 License
