@@ -5,6 +5,10 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.views import generic
 
+from django.contrib.auth.models import User
+from rest_framework import generics, permissions
+from serializers import UserSerializer
+
 import django_browserid.views
 from funfactory.urlresolvers import reverse_lazy
 from tower import ugettext as _
@@ -53,3 +57,20 @@ class UpdateProfileView(UserProfileRequiredMixin, generic.UpdateView):
 
     def get_object(self):
         return self.request.user.profile
+
+
+class UserListAPI(generics.ListCreateAPIView):
+    """
+    API endpoint that allows to get complete list of users.
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserDetailAPI(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint that allows to get users to be viewed or edited.
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    lookup_field = 'email'
