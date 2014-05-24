@@ -13,5 +13,5 @@ urlpatterns = patterns('',
 
     # API URL's for interacting with User objects
     url(r'^api/v1/user/$', views.UserListAPI.as_view(), name='api-user'),
-    url(r'^api/v1/user/(?P<email>([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+))/$', views.UserDetailAPI.as_view(), name='api-user-detail'),
+    url(r'^api/v1/user/(?P<email>[^/\\]+)/$', views.UserDetailAPI.as_view(), name='api-user-detail'),
 )

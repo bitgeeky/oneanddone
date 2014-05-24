@@ -4,11 +4,9 @@
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.views import generic
-
 from django.contrib.auth.models import User
-from rest_framework import generics, permissions
-from serializers import UserSerializer
 
+from rest_framework import generics, permissions
 import django_browserid.views
 from funfactory.urlresolvers import reverse_lazy
 from tower import ugettext as _
@@ -16,6 +14,7 @@ from tower import ugettext as _
 from oneanddone.users.forms import UserProfileForm
 from oneanddone.users.mixins import UserProfileRequiredMixin
 from oneanddone.users.models import UserProfile
+from serializers import UserSerializer
 
 
 class LoginView(generic.TemplateView):

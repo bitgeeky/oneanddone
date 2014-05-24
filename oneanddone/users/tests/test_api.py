@@ -1,9 +1,7 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
-from nose.tools import eq_
-
-from oneanddone.users.tests import UserFactory
+import random
 
 from django.contrib.auth.models import Permission
 
@@ -11,14 +9,18 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from rest_framework.reverse import reverse
 from rest_framework.authtoken.models import Token
+from nose.tools import eq_
 
-import random
+from oneanddone.users.tests import UserFactory
 
 
 class APITests(APITestCase):
-    """
-    Test Cases For User REST API
-    """
+
+    def assert_response_status(self, response, expected_status):
+        eq_(response.status_code, expected_status,
+            "Test Failed, got response status: %s, expected status: %s" %
+            (response.status_code, expected_status))
+
     def setUp(self):
         self.client_user = UserFactory.create()
 
@@ -34,19 +36,16 @@ class APITests(APITestCase):
         Test user list, user details, user deletion for unauthenticated user
         """
         response = self.client.get(reverse('api-user'))
-        eq_(response.status_code, status.HTTP_401_UNAUTHORIZED,
-            "Failed with status code %s" % response.status_code)
+        self.assert_response_status(response, status.HTTP_401_UNAUTHORIZED)
 
         test_user = UserFactory.create()
         user_uri = self.uri + test_user.email + '/'
 
         get_response = self.client.get(user_uri)
-        eq_(get_response.status_code, status.HTTP_401_UNAUTHORIZED,
-            "Failed with status code %s" % get_response.status_code)
+        self.assert_response_status(get_response, status.HTTP_401_UNAUTHORIZED)
 
         delete_response = self.client.delete(user_uri)
-        eq_(delete_response.status_code, status.HTTP_401_UNAUTHORIZED,
-            "Failed with status code %s" % delete_response.status_code)
+        self.assert_response_status(delete_response, status.HTTP_401_UNAUTHORIZED)
 
     def test_client_with_false_token(self):
         """
@@ -58,19 +57,16 @@ class APITests(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + false_token)
 
         response = self.client.get(reverse('api-user'))
-        eq_(response.status_code, status.HTTP_401_UNAUTHORIZED,
-            "Failed with status code %s" % response.status_code)
+        self.assert_response_status(response, status.HTTP_401_UNAUTHORIZED)
 
         test_user = UserFactory.create()
         user_uri = self.uri + test_user.email + '/'
 
         get_response = self.client.get(user_uri)
-        eq_(get_response.status_code, status.HTTP_401_UNAUTHORIZED,
-            "Failed with status code %s" % get_response.status_code)
+        self.assert_response_status(get_response, status.HTTP_401_UNAUTHORIZED)
 
         delete_response = self.client.delete(user_uri)
-        eq_(delete_response.status_code, status.HTTP_401_UNAUTHORIZED,
-            "Failed with status code %s" % delete_response.status_code)
+        self.assert_response_status(delete_response, status.HTTP_401_UNAUTHORIZED)
 
     def test_forbidden_client(self):
         """
@@ -86,8 +82,7 @@ class APITests(APITestCase):
 
         #Make a DELETE request
         delete_response = self.client.delete(user_uri)
-        eq_(delete_response.status_code, status.HTTP_403_FORBIDDEN,
-            "Failed with status code %s" % delete_response.status_code)
+        self.assert_response_status(delete_response, status.HTTP_403_FORBIDDEN)
 
     def test_get_user_list(self):
         """
@@ -95,8 +90,7 @@ class APITests(APITestCase):
         """
         header = {'HTTP_AUTHORIZATION': 'Token {}'.format(self.token)}
         response = self.client.get(reverse('api-user'), {}, **header)
-        eq_(response.status_code, status.HTTP_200_OK,
-            "Failed with status code %s" % response.status_code)
+        self.assert_response_status(response, status.HTTP_200_OK)
 
     def test_get_user_details(self):
         """
@@ -106,8 +100,7 @@ class APITests(APITestCase):
         test_user = UserFactory.create()
         user_uri = self.uri + test_user.email + '/'
         response = self.client.get(user_uri)
-        eq_(response.status_code, status.HTTP_200_OK,
-            "Failed with status code %s" % response.status_code)
+        self.assert_response_status(response, status.HTTP_200_OK)
 
     def test_delete_user(self):
         """
@@ -119,10 +112,8 @@ class APITests(APITestCase):
 
         #Make a DELETE request
         delete_response = self.client.delete(user_uri)
-        eq_(delete_response.status_code, status.HTTP_204_NO_CONTENT,
-            "Failed with status code %s" % delete_response.status_code)
+        self.assert_response_status(delete_response, status.HTTP_204_NO_CONTENT)
 
         #Verify that the user has been deleted
         get_response = self.client.get(user_uri)
-        eq_(get_response.status_code, status.HTTP_404_NOT_FOUND,
-            "Failed with status code %s" % get_response.status_code)
+        self.assert_response_status(get_response, status.HTTP_404_NOT_FOUND)
