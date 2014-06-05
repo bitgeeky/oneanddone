@@ -12,16 +12,17 @@
 
 <main class="billboard content-container">
 
-    <h3>{{ ngettext('{count} task completed', '{count} tasks completed', attempts_finished)|f(count=user.attempts_finished_count) }}</h3>
-    <ul>
-        {% for attempt in attempts_finished %}
-          <li><a href="{{ attempt.task.get_absolute_url() }}">{{ attempt.task.name }}</a></li>
-        {% endfor %}
-    </ul>
+  <p><a href="{{ url('users.profile.update') }}" id="edit-profile" class="button">{{ _('Edit profile') }}</a></p>
 
-    {% import 'base/pagination.html' as pagination %}
-    {{ pagination.arrows(request, attempts_finished, attempts_finished.paginator) }}
+  <h3>{{ ngettext('{count} task completed', '{count} tasks completed', attempts_finished)|f(count=user.attempts_finished_count) }}</h3>
+  <ul>
+    {% for attempt in attempts_finished %}
+      <li><a href="{{ attempt.task.get_absolute_url() }}">{{ attempt.task.name }}</a></li>
+    {% endfor %}
+  </ul>
 
+  {% import 'base/pagination.html' as pagination %}
+  {{ pagination.arrows(request, attempts_finished, attempts_finished.paginator) }}
 
 </main>
 {% endblock %}
