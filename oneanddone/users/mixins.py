@@ -14,10 +14,11 @@ class BaseUserProfileRequiredMixin(object):
     the view.
     """
     def dispatch(self, request, *args, **kwargs):
-        if not UserProfile.objects.filter(user=request.user).exists():
-            return redirect('users.profile.create')
-        else:
+        user_profile = UserProfile.objects.filter(user=request.user)
+        if user_profile.exists() and user_profile[0].privacy_agreement:
             return super(BaseUserProfileRequiredMixin, self).dispatch(request, *args, **kwargs)
+        else:
+            return redirect('users.profile.create')
 
 
 class UserProfileRequiredMixin(LoginRequiredMixin, BaseUserProfileRequiredMixin):

@@ -48,3 +48,4 @@ User.add_to_class('attempts_in_progress', user_attempts_in_progress)
 class UserProfile(models.Model):
     user = models.OneToOneField(User, related_name='profile')
     name = models.CharField(_lazy(u'Name'), max_length=255)
+    privacy_agreement = models.BooleanField(default=False)
