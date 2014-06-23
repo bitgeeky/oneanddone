@@ -11,6 +11,7 @@ from rest_framework import generics, permissions
 import django_browserid.views
 from funfactory.urlresolvers import reverse_lazy
 from tower import ugettext as _
+from random import randint
 
 from oneanddone.tasks.models import TaskAttempt
 from oneanddone.users.forms import UserProfileForm
@@ -42,6 +43,19 @@ class CreateProfileView(generic.CreateView):
             return redirect('base.home')
         else:
             return super(CreateProfileView, self).dispatch(request, *args, **kwargs)
+    
+    @property
+    def default_username(self):
+        random_username = self.request.user.email.split('@')[0] + str(randint(1,100))
+        if not UserProfile.objects.filter(username=random_username).exists():
+            return random_username
+        else:
+            random_username = self.default_username
+
+    def get_initial(self):
+        return {
+            'username': self.default_username,
+        }
 
     def form_valid(self, form):
         profile = form.save(commit=False)
