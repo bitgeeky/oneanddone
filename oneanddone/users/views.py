@@ -15,7 +15,7 @@ from random import randint
 import re
 
 from oneanddone.tasks.models import TaskAttempt
-from oneanddone.users.forms import UserProfileForm
+from oneanddone.users.forms import UserProfileForm, SignUpForm
 from oneanddone.users.mixins import UserProfileRequiredMixin
 from oneanddone.users.models import UserProfile
 from serializers import UserSerializer, UserProfileSerializer
@@ -34,9 +34,21 @@ class Verify(django_browserid.views.Verify):
         return super(Verify, self).login_failure(*args, **kwargs)
 
 
+def default_username(email, counter):
+    if not counter:
+        random_username = re.sub(r'[\W_]+', '', email.split('@')[0])
+    else:
+        random_username = re.sub(r'[\W_]+', '', email.split('@')[0] + str(randint(1,100)))
+
+    if not UserProfile.objects.filter(username=random_username).exists():
+        return random_username
+    else:
+        return default_username(email, counter + 1)
+
+
 class CreateProfileView(generic.CreateView):
     model = UserProfile
-    form_class = UserProfileForm
+    form_class = SignUpForm
     template_name = 'users/profile/edit.html'
 
     def dispatch(self, request, *args, **kwargs):
@@ -45,17 +57,9 @@ class CreateProfileView(generic.CreateView):
         else:
             return super(CreateProfileView, self).dispatch(request, *args, **kwargs)
 
-    @property
-    def default_username(self):
-        random_username = re.sub(r'[\W_]+', '', self.request.user.email.split('@')[0] + str(randint(1,100)))
-        if not UserProfile.objects.filter(username=random_username).exists():
-            return random_username
-        else:
-            random_username = self.default_username
-
     def get_initial(self):
         return {
-            'username': self.default_username,
+            'username': default_username(self.request.user.email, 0),
         }
 
     def form_valid(self, form):
@@ -67,22 +71,19 @@ class CreateProfileView(generic.CreateView):
 
 class UpdateProfileView(UserProfileRequiredMixin, generic.UpdateView):
     model = UserProfile
-    form_class = UserProfileForm
     template_name = 'users/profile/edit.html'
     success_url = reverse_lazy('base.home')
 
-    @property
-    def default_username(self):
-        random_username = re.sub(r'[\W_]+', '', self.request.user.email.split('@')[0] + str(randint(1,100)))
-        if not UserProfile.objects.filter(username=random_username).exists():
-            return random_username
+    def get_form_class(self):
+        if self.request.user.profile.privacy_policy_accepted:
+            return UserProfileForm
         else:
-            random_username = self.default_username
+            return SignUpForm
 
     def get_initial(self):
         if not self.request.user.profile.username:
             return {
-                'username': self.default_username,
+                'username': default_username(self.request.user.email, 0),
             }
 
     def get_object(self):

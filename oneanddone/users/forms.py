@@ -3,15 +3,26 @@ from django import forms
 from oneanddone.users.models import UserProfile
 
 
-class UserProfileForm(forms.ModelForm):
-    privacy_policy_accepted = forms.BooleanField(required = True,)
+class SignUpForm(forms.ModelForm):
+    privacy_policy_accepted = forms.BooleanField(
+        label = "You are creating a profile that will include a public username and work history. You will begin to receive email communications from Mozilla once you have completed tasks. You may unsubscribe at anytime by clicking the line at the bottom of these emails.",
+        required = True,)
     username = forms.RegexField(
+        label= "Username  https://oneanddone.mozilla.org/en-US/profile/",
         max_length=30, regex=r'^[a-zA-Z0-9]+$',
-        help_text = "Required. 30 characters or fewer. Letters and digits only.",
-        error_messages = {'invalid': "This value may contain only alphanumeric characters."})
+        error_messages = {'invalid': "This value may contain only alphanumeric characters. ( r'^[a-zA-Z0-9]+$' )"})
 
     class Meta:
         model = UserProfile
-        fields = ('username', 'name', 'privacy_policy_accepted')
+        fields = ('name', 'username', 'privacy_policy_accepted')
 
-    privacy_policy_accepted.help_text = ("I'm okay with you handling this info as you explain in <a href='https://www.mozilla.org/en-US/privacy/websites/' target='_blank'>Mozilla's Privacy Policy</a>.")
+
+class UserProfileForm(forms.ModelForm):
+    username = forms.RegexField(
+        label= "Username  https://oneanddone.mozilla.org/en-US/profile/",
+        max_length=30, regex=r'^[a-zA-Z0-9]+$',
+        error_messages = {'invalid': "This value may contain only alphanumeric characters. ( r'^[a-zA-Z0-9]+$' )"})
+
+    class Meta:
+        model = UserProfile
+        fields = ('name', 'username')
