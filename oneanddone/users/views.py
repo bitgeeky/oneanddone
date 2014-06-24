@@ -70,6 +70,20 @@ class UpdateProfileView(UserProfileRequiredMixin, generic.UpdateView):
     form_class = UserProfileForm
     template_name = 'users/profile/edit.html'
     success_url = reverse_lazy('base.home')
+    
+    @property
+    def default_username(self):
+        random_username = re.sub(r'[\W_]+', '', self.request.user.email.split('@')[0] + str(randint(1,100)))
+        if not UserProfile.objects.filter(username=random_username).exists():
+            return random_username
+        else:
+            random_username = self.default_username
+    
+    def get_initial(self):
+        if not self.request.user.profile.username:
+            return {
+                'username': self.default_username,
+            }
 
     def get_object(self):
         return self.request.user.profile
