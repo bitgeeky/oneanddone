@@ -5,6 +5,10 @@ from oneanddone.users.models import UserProfile
 
 class UserProfileForm(forms.ModelForm):
     privacy_policy_accepted = forms.BooleanField(required = True,)
+    username = forms.RegexField(
+        max_length=30, regex=r'^[a-zA-Z0-9]+$',
+        help_text = "Required. 30 characters or fewer. Letters and digits only.",
+        error_messages = {'invalid': "This value may contain only alphanumeric characters."})
     
     class Meta:
         model = UserProfile
