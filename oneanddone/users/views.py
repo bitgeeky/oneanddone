@@ -12,6 +12,7 @@ import django_browserid.views
 from funfactory.urlresolvers import reverse_lazy
 from tower import ugettext as _
 from random import randint
+import re
 
 from oneanddone.tasks.models import TaskAttempt
 from oneanddone.users.forms import UserProfileForm
@@ -46,7 +47,7 @@ class CreateProfileView(generic.CreateView):
     
     @property
     def default_username(self):
-        random_username = self.request.user.email.split('@')[0] + str(randint(1,100))
+        random_username = re.sub(r'[\W_]+', '', self.request.user.email.split('@')[0] + str(randint(1,100)))
         if not UserProfile.objects.filter(username=random_username).exists():
             return random_username
         else:
