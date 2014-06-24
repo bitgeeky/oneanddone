@@ -10,7 +10,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'UserProfile.username'
         db.add_column('users_userprofile', 'username',
-                      self.gf('django.db.models.fields.CharField')(default='pankaj', unique=True, max_length=255),
+                      self.gf('django.db.models.fields.CharField')(default='user1229', max_length=30),
                       keep_default=False)
 
         # Adding field 'UserProfile.privacy_policy_accepted'
@@ -70,7 +70,7 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'privacy_policy_accepted': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'user': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'profile'", 'unique': 'True', 'to': "orm['auth.User']"}),
-            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
+            'username': ('django.db.models.fields.CharField', [], {'default': "'user7675'", 'max_length': '30'})
         }
     }
 

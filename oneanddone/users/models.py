@@ -46,16 +46,14 @@ def user_attempts_in_progress(self):
 User.add_to_class('attempts_in_progress', user_attempts_in_progress)
 
 
-def default_username():
-    random_username = 'user' + str(randint(1,10000))
-    if not UserProfile.objects.filter(username=random_username).exists():
-        return random_username
-    else:
-        random_username = self.default_username
 
 class UserProfile(models.Model):
+    
+    def default_username():
+        return 'user' + str(randint(1,10000))
+
     user = models.OneToOneField(User, related_name='profile')
-    username = models.CharField(_lazy(u'UserName'), max_length=30, unique=True, default=default_username)
+    username = models.CharField(_lazy(u'UserName'), max_length=30, unique=True, default=lambda: 'user'+str(randint(1,10000))
     name = models.CharField(_lazy(u'Name'), max_length=255)
     privacy_policy_accepted = models.BooleanField(default=False)
     
