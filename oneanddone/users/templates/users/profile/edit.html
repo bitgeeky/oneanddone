@@ -18,6 +18,7 @@
     {{ form.username.errors }}
     <p>
     {{ form.username.label }}
+     https://oneanddone.mozilla.org/en-US/profile/
     {{ form.username }}
     </p>
     {% if form.privacy_policy_accepted %}
@@ -27,7 +28,7 @@
     {{form.privacy_policy_accepted.errors}}
     <p>
     {{form.privacy_policy_accepted}}
-    * I'm okay with you handling this info as you explain in <a href='https://www.mozilla.org/en-US/privacy/websites/' target='_blank'>Mozilla's Privacy Policy</a>. 
+    {{_("* I'm okay with you handling this info as you explain in <a href='https://www.mozilla.org/en-US/privacy/websites/' target='_blank'>Mozilla's Privacy Policy</a>.")}}
     </p>
     {% endif %}
     <div class="actions-container">

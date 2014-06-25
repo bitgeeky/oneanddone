@@ -66,6 +66,7 @@ class CreateProfileView(generic.CreateView):
         profile = form.save(commit=False)
         profile.user = self.request.user
         profile.save()
+        messages.success(self.request, _('Your profile has been created.'))
         return redirect('base.home')
 
 
@@ -88,6 +89,10 @@ class UpdateProfileView(UserProfileRequiredMixin, generic.UpdateView):
 
     def get_object(self):
         return self.request.user.profile
+
+    def form_valid(self, form):
+        messages.success(self.request, _('Your profile has been updated.'))
+        return redirect('base.home')
 
 class ProfileDetailsView(UserProfileRequiredMixin, generic.DetailView):
     model = UserProfile
