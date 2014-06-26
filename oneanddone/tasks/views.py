@@ -17,7 +17,7 @@ from oneanddone.tasks.mixins import APIRecordCreatorMixin, APIOnlyCreatorMayDele
 from oneanddone.tasks.mixins import TaskMustBePublishedMixin
 from oneanddone.tasks.models import Feedback, Task, TaskAttempt
 from oneanddone.tasks.serializers import TaskSerializer
-from oneanddone.users.mixins import MyStaffUserRequiredMixin, UserProfileRequiredMixin
+from oneanddone.users.mixins import MyStaffUserRequiredMixin, UserProfileRequiredMixin, PrivacyPolicyRequiredMixin
 
 
 class AvailableTasksView(TaskMustBePublishedMixin, FilterView):
@@ -52,7 +52,7 @@ class TaskDetailView(TaskMustBePublishedMixin, generic.DetailView):
         return ctx
 
 
-class StartTaskView(UserProfileRequiredMixin, TaskMustBePublishedMixin,
+class StartTaskView(UserProfileRequiredMixin, PrivacyPolicyRequiredMixin, TaskMustBePublishedMixin,
                     generic.detail.SingleObjectMixin, generic.View):
     model = Task
 
@@ -72,7 +72,7 @@ class StartTaskView(UserProfileRequiredMixin, TaskMustBePublishedMixin,
         return redirect(task)
 
 
-class TaskAttemptView(UserProfileRequiredMixin, generic.detail.SingleObjectMixin, generic.View):
+class TaskAttemptView(UserProfileRequiredMixin, PrivacyPolicyRequiredMixin, generic.detail.SingleObjectMixin, generic.View):
     def get_queryset(self):
         return TaskAttempt.objects.filter(user=self.request.user, state=TaskAttempt.STARTED)
 
@@ -95,7 +95,7 @@ class FinishTaskView(TaskAttemptView):
         return redirect('tasks.feedback', attempt.pk)
 
 
-class CreateFeedbackView(UserProfileRequiredMixin, TaskMustBePublishedMixin, generic.CreateView):
+class CreateFeedbackView(UserProfileRequiredMixin, PrivacyPolicyRequiredMixin, TaskMustBePublishedMixin, generic.CreateView):
     model = Feedback
     form_class = FeedbackForm
     template_name = 'tasks/feedback.html'
