@@ -106,7 +106,7 @@ class DeleteProfileView(UserProfileRequiredMixin, generic.DeleteView):
         return self.request.user.profile
 
 
-class ProfileDetailsView(generic.DetailView):
+class ProfileDetailsView(UserProfileRequiredMixin, generic.DetailView):
     model = UserProfile
     template_name = 'users/profile/detail.html'
 

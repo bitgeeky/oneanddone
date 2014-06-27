@@ -52,7 +52,7 @@ class TaskDetailView(TaskMustBePublishedMixin, generic.DetailView):
         return ctx
 
 
-class StartTaskView(UserProfileRequiredMixin, PrivacyPolicyRequiredMixin, TaskMustBePublishedMixin,
+class StartTaskView(PrivacyPolicyRequiredMixin, TaskMustBePublishedMixin,
                     generic.detail.SingleObjectMixin, generic.View):
     model = Task
 
@@ -72,7 +72,7 @@ class StartTaskView(UserProfileRequiredMixin, PrivacyPolicyRequiredMixin, TaskMu
         return redirect(task)
 
 
-class TaskAttemptView(UserProfileRequiredMixin, PrivacyPolicyRequiredMixin, generic.detail.SingleObjectMixin, generic.View):
+class TaskAttemptView(PrivacyPolicyRequiredMixin, generic.detail.SingleObjectMixin, generic.View):
     def get_queryset(self):
         return TaskAttempt.objects.filter(user=self.request.user, state=TaskAttempt.STARTED)
 
@@ -95,7 +95,7 @@ class FinishTaskView(TaskAttemptView):
         return redirect('tasks.feedback', attempt.pk)
 
 
-class CreateFeedbackView(UserProfileRequiredMixin, PrivacyPolicyRequiredMixin, TaskMustBePublishedMixin, generic.CreateView):
+class CreateFeedbackView(PrivacyPolicyRequiredMixin, TaskMustBePublishedMixin, generic.CreateView):
     model = Feedback
     form_class = FeedbackForm
     template_name = 'tasks/feedback.html'
