@@ -17,7 +17,7 @@ from oneanddone.tasks.mixins import APIRecordCreatorMixin, APIOnlyCreatorMayDele
 from oneanddone.tasks.mixins import TaskMustBePublishedMixin
 from oneanddone.tasks.models import Feedback, Task, TaskAttempt
 from oneanddone.tasks.serializers import TaskSerializer
-from oneanddone.users.mixins import MyStaffUserRequiredMixin, UserProfileRequiredMixin, PrivacyPolicyRequiredMixin
+from oneanddone.users.mixins import MyStaffUserRequiredMixin, PrivacyPolicyRequiredMixin
 
 
 class AvailableTasksView(TaskMustBePublishedMixin, FilterView):

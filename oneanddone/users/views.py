@@ -50,7 +50,7 @@ def default_username(email, counter):
 class CreateProfileView(generic.CreateView):
     model = UserProfile
     form_class = SignUpForm
-    template_name = 'users/profile/create.html'
+    template_name = 'users/profile/edit.html'
 
     def dispatch(self, request, *args, **kwargs):
         if UserProfile.objects.filter(user=request.user).exists():
@@ -75,6 +75,11 @@ class UpdateProfileView(LoginRequiredMixin, generic.UpdateView):
     model = UserProfile
     template_name = 'users/profile/edit.html'
     success_url = reverse_lazy('base.home')
+
+    def get_context_data(self, *args, **kwargs):
+        ctx = super(UpdateProfileView, self).get_context_data(*args, **kwargs)
+        ctx['action'] = 'Update'
+        return ctx
 
     def get_form_class(self):
         if self.request.user.profile.privacy_policy_accepted:
